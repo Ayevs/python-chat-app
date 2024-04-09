@@ -1,5 +1,6 @@
 import socket
 import threading
+import datetime
 
 # store the client info
 clients = {}
@@ -63,6 +64,14 @@ def main():
     # Define host and port
     host = "127.0.0.1"  # localhost
     port = 9999
+
+    # Get the current date and time
+    current_time = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+    # appending welcome message to the chat history
+    chat_history.append(
+        f"welcome to Global chat, this server has been running since: {current_time}"
+    )
 
     # Create a TCP socket
     server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)

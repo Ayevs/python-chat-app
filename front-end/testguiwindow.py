@@ -72,9 +72,8 @@ class ChatWindow:
             # sock.settimeout(1)  # Adjust the timeout value as needed
             # try:
             #     chat_history = sock.recv(4096).decode("utf-8")
-            #     for message in chat_history.split("\n"):
-            #         if message:
-            #             self.write_message(message + "\n")
+            #     if chat_history:
+            #         self.write_message(chat_history)
             # except socket.timeout:
             #     print("No chat history received.")
 
@@ -89,9 +88,9 @@ class ChatWindow:
                 elif event == "Send":
                     message = values["ChatInput"].strip()
                     if message:
-                        self.chat_history.append(f"{self.username}: {message}")
+                        # self.chat_history.append(f"{self.username}: {message}")
                         self.window["ChatHistory"].update("\n".join(self.chat_history))
-                        send_message(sock, f"{self.username}: {message}")
+                        send_message(sock, f"{message}")
 
 
 if __name__ == "__main__":
@@ -117,7 +116,7 @@ if __name__ == "__main__":
             break
         elif event == "Ok":
             username = values["UsernameInput"]
-            server_address = ("127.0.0.1", 9999)  # Replace with your server address
+            server_address = ("127.0.0.1", 9999)  # server address
             chat_window = ChatWindow(username, server_address)
             chat_window.run()
             break
