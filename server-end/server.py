@@ -1,24 +1,62 @@
 import socket
 import threading
 
+# store the client info
+clients = {}
 
-def handle_client(client_socket):
-    # Send a welcome message to the client
-    client_socket.send(b"Welcome to the server. Send your messages.\n")
+# store chat history
+chat_history = []
 
-    while True:
-        # Receive data from the client
-        data = client_socket.recv(1024)
-        if not data:
-            # If no data is received, the client has disconnected
-            print("Client disconnected.")
-            break
 
-        # Print the received message
-        print("Received message from client:", data.decode())
+def handle_client(client_socket, client_address):
+    try:
+        username = client_socket.recv(1024).decode().strip()
 
-    # Close the client socket
-    client_socket.close()
+        # add client to list
+        clients[client_socket] = username
+
+        # send the chat history to all the clients
+        for message in chat_history:
+            client_socket.send(message.encode())
+
+        while True:
+            # Receive data from the client
+            data = client_socket.recv(1024)
+            if not data:
+                # If no data is received, the client has disconnected
+                print(f"{username} disconnected.")
+                del clients[client_socket]  # removes the client from the list of users
+                break
+
+            # Print the received message
+            # print("Received message from client:", data.decode())
+
+            # broadcast message from the client
+            message = f"{username}: {data.decode()}"
+            chat_history.append(message)
+            broadcast(message)
+
+    except Exception as e:
+        print(f"error handling client {username}: {e}")
+        del clients[client_socket]
+    finally:
+        # Close the client socket
+        client_socket.close()
+
+
+def broadcast(message):
+    # method userd to sending message to all connected clients
+    # for client_socket in clients:
+    #     client_socket.send(message.encode())
+    # chat_history.append(message)
+    for client_socket in list(clients.keys()):
+        try:
+            client_socket.send(message.encode())
+        except ConnectionError:
+            # if theres an error sending message we assume the client disconnected
+            username = clients[client_socket]
+            print(f"{username} disconnected unexpecredly.")
+            del clients[client_socket]
 
 
 def main():
@@ -44,7 +82,7 @@ def main():
 
             # Create a new thread to handle the client
             client_thread = threading.Thread(
-                target=handle_client, args=(client_socket,)
+                target=handle_client, args=(client_socket, client_address)
             )
             client_thread.start()
 
