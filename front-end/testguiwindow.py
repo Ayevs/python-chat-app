@@ -58,8 +58,6 @@ class ChatWindow:
 
     # Method to update chat history with received/sent messages
     def write_message(self, message):
-        # self.chat_history += message + "\n"
-        # self.window["ChatHistory"].update(self.chat_history)
         self.chat_history.append(message)
         self.window["ChatHistory"].update("\n".join(self.chat_history))
 
@@ -75,14 +73,6 @@ class ChatWindow:
             chat_history = sock.recv(1024).decode("utf-8")
             if chat_history:
                 self.write_message(chat_history)
-
-            # sock.settimeout(1)  # Adjust the timeout value as needed
-            # try:
-            #     chat_history = sock.recv(4096).decode("utf-8")
-            #     if chat_history:
-            #         self.write_message(chat_history)
-            # except socket.timeout:
-            #     print("No chat history received.")
 
             # thread to keep recieveing messages
             threading.Thread(target=receive_messages, args=(sock, self)).start()
@@ -126,7 +116,7 @@ if __name__ == "__main__":
             break
         elif event == "Ok":
             username = values["UsernameInput"]
-            server_address = ("18.221.198.127", 9999)  # server address
+            server_address = ("127.0.0.1", 9999)  # server address
             chat_window = ChatWindow(username, server_address)
             chat_window.run()
             break

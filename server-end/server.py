@@ -16,7 +16,12 @@ def handle_client(client_socket, client_address):
         # add client to list
         clients[client_socket] = username
 
-        # send the chat history to all the clients
+        # Notify all clients except the newly connected one that a new user has connected
+        notify_message = f"{username} has connected to the server."
+        print(notify_message)
+        broadcast(notify_message, exclude_client=client_socket)
+
+        # send the chat history to the newly connected client
         for message in chat_history:
             client_socket.send(message.encode())
 
@@ -28,9 +33,6 @@ def handle_client(client_socket, client_address):
                 print(f"{username} disconnected.")
                 del clients[client_socket]  # removes the client from the list of users
                 break
-
-            # Print the received message
-            # print("Received message from client:", data.decode())
 
             # broadcast message from the client
             message = f"{username}: {data.decode()}"
@@ -45,24 +47,22 @@ def handle_client(client_socket, client_address):
         client_socket.close()
 
 
-def broadcast(message):
+def broadcast(message, exclude_client=None):
     # method userd to sending message to all connected clients
-    # for client_socket in clients:
-    #     client_socket.send(message.encode())
-    # chat_history.append(message)
     for client_socket in list(clients.keys()):
-        try:
-            client_socket.send(message.encode())
-        except ConnectionError:
-            # if theres an error sending message we assume the client disconnected
-            username = clients[client_socket]
-            print(f"{username} disconnected unexpecredly.")
-            del clients[client_socket]
+        if client_socket != exclude_client:
+            try:
+                client_socket.send(message.encode())
+            except ConnectionError:
+                # if there's an error sending a message we assume the client disconnected
+                username = clients[client_socket]
+                print(f"{username} disconnected unexpectedly.")
+                del clients[client_socket]
 
 
 def main():
     # Define host and port
-    host = "0.0.0.0"  # localhost
+    host = "127.0.0.1"  # localhost
     port = 9999
 
     # Get the current date and time
