@@ -62,7 +62,7 @@ def broadcast(message):
 
 def main():
     # Define host and port
-    host = "127.0.0.1"  # localhost
+    host = "0.0.0.0"  # localhost
     port = 9999
 
     # Get the current date and time

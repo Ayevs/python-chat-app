@@ -5,6 +5,7 @@ import PySimpleGUI as sg
 # theme for the window
 sg.theme("DarkBlue14")
 
+
 # Function to continuously receive messages from the server
 def receive_messages(sock, chat_window):
     while True:
@@ -14,12 +15,14 @@ def receive_messages(sock, chat_window):
         except ConnectionAbortedError:
             break
 
+
 # Function to send messages to the server
 def send_message(sock, message):
     try:
         sock.sendall(message.encode("utf-8"))
     except ConnectionAbortedError:
         pass
+
 
 # Class representing the GUI window for the chat application
 class ChatWindow:
@@ -63,9 +66,9 @@ class ChatWindow:
     # Method to run the chat window
     def run(self):
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
-             # Connect to the server
+            # Connect to the server
             sock.connect(self.server_address)
-             # Send username to server
+            # Send username to server
             sock.sendall(self.username.encode("utf-8"))
 
             # recieve chat history from server
@@ -123,7 +126,7 @@ if __name__ == "__main__":
             break
         elif event == "Ok":
             username = values["UsernameInput"]
-            server_address = ("127.0.0.1", 9999)  # server address
+            server_address = ("18.221.198.127", 9999)  # server address
             chat_window = ChatWindow(username, server_address)
             chat_window.run()
             break
