@@ -5,7 +5,7 @@ import PySimpleGUI as sg
 # theme for the window
 sg.theme("DarkBlue14")
 
-
+# Function to continuously receive messages from the server
 def receive_messages(sock, chat_window):
     while True:
         try:
@@ -14,14 +14,14 @@ def receive_messages(sock, chat_window):
         except ConnectionAbortedError:
             break
 
-
+# Function to send messages to the server
 def send_message(sock, message):
     try:
         sock.sendall(message.encode("utf-8"))
     except ConnectionAbortedError:
         pass
 
-
+# Class representing the GUI window for the chat application
 class ChatWindow:
     def __init__(self, username, server_address):
         self.username = username
@@ -53,15 +53,19 @@ class ChatWindow:
         )
         self.chat_history = []
 
+    # Method to update chat history with received/sent messages
     def write_message(self, message):
         # self.chat_history += message + "\n"
         # self.window["ChatHistory"].update(self.chat_history)
         self.chat_history.append(message)
         self.window["ChatHistory"].update("\n".join(self.chat_history))
 
+    # Method to run the chat window
     def run(self):
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as sock:
+             # Connect to the server
             sock.connect(self.server_address)
+             # Send username to server
             sock.sendall(self.username.encode("utf-8"))
 
             # recieve chat history from server
@@ -77,7 +81,7 @@ class ChatWindow:
             # except socket.timeout:
             #     print("No chat history received.")
 
-            # thread to kee recieveing messages
+            # thread to keep recieveing messages
             threading.Thread(target=receive_messages, args=(sock, self)).start()
 
             # loop for sending messages
@@ -94,6 +98,7 @@ class ChatWindow:
 
 
 if __name__ == "__main__":
+    # Layout for the initial username input window
     layout = [
         [
             sg.Text(
@@ -109,7 +114,9 @@ if __name__ == "__main__":
             sg.Button("Close", button_color=("white", "red"), font=("Helvetica", 12)),
         ],
     ]
+    # Create the initial window
     window = sg.Window("Chat App", layout, resizable=True, finalize=True)
+    # Main loop to handle events in the initial window
     while True:
         event, values = window.read()
         if event == sg.WINDOW_CLOSED or event == "Close":
