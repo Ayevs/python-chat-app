@@ -116,7 +116,7 @@ if __name__ == "__main__":
             break
         elif event == "Ok":
             username = values["UsernameInput"]
-            server_address = ("127.0.0.1", 9999)  # server address
+            server_address = ("18.221.198.127", 9999)  # server address
             chat_window = ChatWindow(username, server_address)
             chat_window.run()
             break
