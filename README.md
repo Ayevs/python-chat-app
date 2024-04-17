@@ -2,3 +2,4 @@ chat app for my networking class where we will use python and tcp connections co
 
 
 The Server is not currecntly online on the cloud, but if you wish to try this out you can simply adjust the code to your needs in the server.py file as well as the apropriate changes to the client.py file in order to make it work on your local machine.
+Another things to keep in mind is due to us using pygui, you will need an account and use the key they give you to run the actual gui.
